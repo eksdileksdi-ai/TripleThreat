@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pink Help Desk - School Support & Knowledge Base</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in-up { animation: fadeIn 0.4s ease-out forwards; }
+
+        .artist-square {
+            background-size: cover;
+            background-position: center;
+            position: relative; 
+            overflow: hidden; 
+        }
+        .artist-square::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.45); 
+            transition: background-color 0.3s;
+            z-index: 1; 
+        }
+        .artist-square:hover::before { background-color: rgba(0, 0, 0, 0.2); }
+        .artist-name-text { position: relative; z-index: 2; text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8); }
+
+        .product-card-button {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 1rem;
+            border-radius: 0.75rem; 
+            border: 1px solid #fbcfe8;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); 
+            background-color: #ffffff; 
+            transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s;
+        }
+        .product-card-button:hover {
+            transform: translateY(-4px); 
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); 
+            background-color: #fce7f6;
+        }
+
+        .lazada-btn {
+            background-color: #be185d; 
+            color: white;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+        .lazada-btn:hover { background-color: #9d174d; transform: translateY(-1px); }
+        .profile-header { background: linear-gradient(to right, #be185d, #ec4899); }
+    </style>
+</head>
+<body class="bg-pink-50 text-pink-900 flex flex-col min-h-screen">
+
+    <!-- HEADER / NAVIGATION -->
+    <header class="bg-pink-700 text-white py-4 px-4 md:px-8 shadow-lg sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <button onclick="changePage('categories')" class="text-xl md:text-2xl font-extrabold hover:text-pink-100 transition-colors focus:outline-none flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3z"/><path d="M3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+                Pink Help Desk
+            </button>
+            
+            <div class="flex items-center space-x-2 md:space-x-4 text-sm font-semibold">
+                <button onclick="changePage('categories')" class="hover:text-pink-200 px-2 py-1">Home</button>
+                <button onclick="changePage('about-team')" class="hover:text-pink-200 px-2 py-1">Support Team</button>
+                
+                <!-- Quick Submit Button -->
+                <button onclick="changePage('submit-ticket')" class="bg-pink-500 hover:bg-pink-600 px-3 py-1.5 rounded-full transition-colors flex items-center space-x-1 shadow">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></svg>
+                    <span class="hidden sm:inline">Submit Ticket</span>
+                </button>
+
+                <!-- My Tickets -->
+                <button onclick="changePage('my-tickets')" class="relative p-2 rounded-full hover:bg-pink-600 transition-colors" title="My Submitted Tickets">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/></svg>
+                    <span id="ticket-count" class="absolute top-0 right-0 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold text-white bg-red-600 rounded-full">0</span>
+                </button>
+
+                <!-- Profile -->
+                <button onclick="changePage('account')" class="p-2 rounded-full hover:bg-pink-600 transition-colors" title="Student Portal Profile">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                </button>
+
+                <!-- Auth Buttons -->
+                <button onclick="changePage('login')" class="border border-white/60 hover:bg-pink-600 px-3 py-1 rounded-lg">Login</button>
+                <button onclick="changePage('register')" class="bg-white text-pink-700 hover:bg-pink-100 px-3 py-1 rounded-lg shadow">Register</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN APP CONTAINER -->
+    <main class="flex-grow max-w-6xl mx-auto px-4 md:px-8 py-8 w-full">
+        <div id="main-app-container"></div>
+        <div id="notification-message-container"></div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-pink-100 border-t border-pink-200 py-6 px-4 md:px-8 mt-auto">
+        <div class="max-w-6xl mx-auto text-center">
+            <p class="text-sm text-pink-700 font-medium">
+                © 2026 Pink Help Desk Knowledge Base System. All rights reserved.
+            </p>
+        </div>
+    </footer>
+
+    <!-- SCRIPT CONTROLLER -->
+    <script>
+        const categories = [
+            {
+                id: 'accounts-login',
+                name: 'Accounts & Portal Access',
+                description: 'Password resets, 2FA login issues, student ID creation, and portal troubleshooting.',
+                logo: 'https://cdn.manilastandard.net/wp-content/uploads/2025/09/story-foto-1-1.jpg',
+                articles: [
+                    { id: 'reset-pwd', title: 'How to Reset Your School Portal Password', views: 1420, solution: 'Navigate to the portal homepage, click "Forgot Password", enter your school email, and follow the recovery link.' },
+                    { id: '2fa-setup', title: 'Setting Up Two-Factor Authentication (2FA)', views: 890, solution: 'Log into profile settings, select Security -> Enable 2FA, and scan the QR code using Google Authenticator.' }
+                ]
+            },
+            {
+                id: 'wifi-network',
+                name: 'Campus Wi-Fi & Infrastructure',
+                description: 'Connecting to Campus Wi-Fi, VPN usage, and hardware support.',
+                logo: 'https://static.wikia.nocookie.net/love-talk/images/3/37/Le-sserafim-kim-chae-won-source-music-girl-group-2022.jpg/revision/latest/scale-to-width-down/1000?cb=20230307142319',
+                articles: [
+                    { id: 'wifi-connect', title: 'Connecting to "Student-Secure" Wi-Fi', views: 3200, solution: 'Select "Student-Secure" network, enter your portal email as the username, and use your student password.' }
+                ]
+            },
+            {
+                id: 'enrolment-grades',
+                name: 'Enrolment & Academic Records',
+                description: 'Class registration, transcript requests, and subject add/drop.',
+                logo: 'https://staticg.sportskeeda.com/editor/2025/08/61fb0-17558696348449-1920.jpg?w=640',
+                articles: [
+                    { id: 'transcript-req', title: 'Requesting Official Transcripts Online', views: 2150, solution: 'Go to Student Services -> Registrar -> Request Transcript. E-transcripts take 1-3 business days.' }
+                ]
+            },
+            {
+                id: 'tuition-fees',
+                name: 'Tuition & Billing Support',
+                description: 'Payment channels, fee breakdowns, and scholarship queries.',
+                logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS_XjkHcMW2UM5WEvrWEG_pDcbB4U4A62SXgrADbQKiEYg0Tor7YI-gA8FS&s=10',
+                articles: [
+                    { id: 'payment-channels', title: 'Available Online Payment Channels', views: 1950, solution: 'We accept OTC bank deposits, Online Banking, and GCash/Maya via the Student Finance Gateway.' }
+                ]
+            }
+        ];
+
+        let state = {
+            currentPage: 'categories',
+            selectedCategoryId: null,
+            selectedArticleId: null,
+            searchQuery: '',
+            submittedTickets: [],
+            user: { name: 'Fracy Ala', email: 'fracy@school.edu', studentId: '2026-88392-MN', course: 'BS Information Technology' }
+        };
+
+        const showNotification = (message) => {
+            const container = document.getElementById('notification-message-container');
+            container.innerHTML = `
+                <div class="fixed bottom-4 right-4 bg-pink-700 text-white px-6 py-3 rounded-full shadow-lg z-50 animate-fade-in-up">
+                    ${message}
+                </div>
+            `;
+            setTimeout(() => { container.innerHTML = ''; }, 3500);
+        };
+
+        const updateTicketCount = () => {
+            const countElement = document.getElementById('ticket-count');
+            if (countElement) countElement.textContent = state.submittedTickets.length;
+        };
+
+        window.handleTicketSubmit = () => {
+            const subject = document.getElementById('ticket-subject').value;
+            const categoryId = document.getElementById('ticket-category').value;
+            const details = document.getElementById('ticket-details').value;
+
+            if (!subject || !details) {
+                showNotification("⚠️ Please fill out all required ticket fields.");
+                return;
+            }
+
+            const newTicket = {
+                id: 'TICK-' + Math.floor(1000 + Math.random() * 9000),
+                subject,
+                category: categories.find(c => c.id === categoryId)?.name || 'General Query',
+                details,
+                date: new Date().toLocaleDateString(),
+                status: 'Open'
+            };
+
+            state.submittedTickets.unshift(newTicket);
+            updateTicketCount();
+            showNotification(`🎟️ Ticket ${newTicket.id} submitted successfully!`);
+            changePage('my-tickets');
+        };
+
+        // --- RENDER FUNCTIONS ---
+        const renderCategoriesPage = () => `
+            <div class="bg-white p-6 md:p-8 rounded-xl shadow-xl mb-8 border-4 border-pink-300 animate-fade-in-up">
+                <h1 class="text-2xl md:text-3xl font-extrabold text-pink-800 mb-2">Welcome to Pink Help Desk Support</h1>
+                <p class="text-pink-700 leading-relaxed">
+                    Search our self-service knowledge base articles first. If you cannot find a solution to your concern, you can submit a support ticket directly to our team.
+                </p>
+            </div>
+
+            <div class="mb-8 animate-fade-in-up">
+                <input 
+                    type="text" 
+                    id="kb-search-input"
+                    placeholder="Search FAQs, solutions, or topics (e.g. Wi-Fi, password, grades)..." 
+                    value="${state.searchQuery}"
+                    oninput="state.searchQuery = this.value; renderSearchResults();"
+                    class="w-full p-4 text-lg border-2 border-pink-300 rounded-xl focus:ring-2 focus:ring-pink-500 bg-white shadow-md text-pink-900"
+                />
+            </div>
+
+            <div id="kb-dynamic-container">
+                <h2 class="text-2xl font-bold mb-6 text-pink-800">Browse Knowledge Categories</h2>
+                <div id="categories-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div>
+            </div>
+        `;
+
+        const renderCategories = () => {
+            const container = document.getElementById('categories-container');
+            if (!container) return;
+            container.innerHTML = categories.map(cat => `
+                <button onclick="changePage('category-articles', '${cat.id}')" 
+                    class="artist-square h-48 w-full rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all transform hover:scale-[1.02] text-left cursor-pointer"
+                    style="background-image: url('${cat.logo}');">
+                    <div class="artist-name-text absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent text-white">
+                        <h2 class="text-lg font-bold">${cat.name}</h2>
+                        <p class="text-xs text-pink-200 line-clamp-2 mt-1">${cat.description}</p>
+                    </div>
+                </button>
+            `).join('');
+        };
+
+        const renderSearchResults = () => {
+            const container = document.getElementById('kb-dynamic-container');
+            if (!container) return;
+            const query = state.searchQuery.toLowerCase().trim();
+            if (!query) {
+                container.innerHTML = `
+                    <h2 class="text-2xl font-bold mb-6 text-pink-800">Browse Knowledge Categories</h2>
+                    <div id="categories-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div>
+                `;
+                renderCategories();
+                return;
+            }
+
+            let results = [];
+            categories.forEach(cat => {
+                cat.articles.forEach(art => {
+                    if (art.title.toLowerCase().includes(query) || art.solution.toLowerCase().includes(query)) {
+                        results.push({ ...art, categoryName: cat.name, categoryId: cat.id });
+                    }
+                });
+            });
+
+            if (results.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-white p-8 rounded-xl border-2 border-pink-200 text-center text-pink-700">
+                        <p class="text-lg font-semibold mb-2">No direct solution articles found for "${query}"</p>
+                        <button onclick="changePage('submit-ticket')" class="lazada-btn font-bold py-2 px-6 rounded-full shadow-md mt-2">
+                            Submit a Support Ticket
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = `
+                <h2 class="text-xl font-bold mb-4 text-pink-800">Matching Articles (${results.length})</h2>
+                <div class="space-y-3">
+                    ${results.map(art => `
+                        <div onclick="changePage('article-detail', '${art.categoryId}', '${art.id}')" class="product-card-button cursor-pointer">
+                            <span class="text-xs font-bold text-pink-500 uppercase">${art.categoryName}</span>
+                            <h3 class="text-md font-bold text-pink-900">${art.title}</h3>
+                            <p class="text-pink-700 text-sm line-clamp-2">${art.solution}</p>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        };
+
+        const renderAboutTeamPage = () => `
+            <div class="text-center animate-fade-in-up">
+                <h1 class="text-3xl font-extrabold text-pink-800 mb-2">About Our Help Desk Team</h1>
+                <p class="text-pink-600 mb-8">Meet the team dedicated to assisting your academic and technical needs.</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+                    <!-- Leader -->
+                    <div class="bg-white p-6 rounded-xl shadow-lg border-2 border-pink-200 text-center">
+                        <img src="https://i.imgur.com/KgYwm3e.jpeg" alt="Fracy Ala" class="w-32 h-32 rounded-circle object-cover mx-auto mb-4 border-4 border-pink-500 rounded-full">
+                        <h3 class="text-xl font-bold text-pink-900">Fracy Ala</h3>
+                        <p class="text-sm font-semibold text-pink-600 mb-2">Support Leader lang po</p>
+                        <p class="text-xs text-pink-500">Fracy mo Elohim mo po exciting po</p>
+                    </div>
+                    <!-- Assistant -->
+                    <div class="bg-white p-6 rounded-xl shadow-lg border-2 border-pink-200 text-center">
+                        <img src="https://i.imgur.com/ESUm79E.jpeg" alt="Gian Baladula" class="w-32 h-32 rounded-circle object-cover mx-auto mb-4 border-4 border-pink-500 rounded-full">
+                        <h3 class="text-xl font-bold text-pink-900">Gian Baladula</h3>
+                        <p class="text-sm font-semibold text-pink-600 mb-2">Support Assistant Lang Po</p>
+                        <p class="text-xs text-pink-500">Gian mo hindi nag ccutting, exciting</p>
+                    </div>
+                    <!-- Support -->
+                    <div class="bg-white p-6 rounded-xl shadow-lg border-2 border-pink-200 text-center">
+                        <img src="https://i.imgur.com/2qRmcZ3.jpeg" alt="Alexander Maigue" class="w-32 h-32 rounded-circle object-cover mx-auto mb-4 border-4 border-pink-500 rounded-full">
+                        <h3 class="text-xl font-bold text-pink-900">Alexander Maigue</h3>
+                        <p class="text-sm font-semibold text-pink-600 mb-2">Support Lang Po</p>
+                        <p class="text-xs text-pink-500">Kahit ano basta meron ako neto exciting</p>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        const renderLoginPage = () => `
+            <div class="max-w-md mx-auto bg-white p-8 rounded-xl shadow-2xl border-t-8 border-pink-600 animate-fade-in-up">
+                <h2 class="text-2xl font-bold text-pink-800 text-center mb-2">Help Desk Login</h2>
+                <p class="text-sm text-pink-600 text-center mb-6">Enter your credentials to access your portal</p>
+                <form onsubmit="event.preventDefault(); showNotification('Logged in successfully!'); changePage('categories');" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-pink-700 mb-1">Email Address</label>
+                        <input type="email" placeholder="student@school.edu" class="w-full p-3 border border-pink-300 rounded-lg" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-pink-700 mb-1">Password</label>
+                        <input type="password" placeholder="••••••••" class="w-full p-3 border border-pink-300 rounded-lg" required>
+                    </div>
+                    <button type="submit" class="lazada-btn w-full py-3 rounded-lg font-bold">Sign In</button>
+                </form>
+            </div>
+        `;
+
+        const renderRegisterPage = () => `
+            <div class="max-w-md mx-auto bg-white p-8 rounded-xl shadow-2xl border-t-8 border-pink-600 animate-fade-in-up">
+                <h2 class="text-2xl font-bold text-pink-800 text-center mb-2">Register Support Account</h2>
+                <p class="text-sm text-pink-600 text-center mb-6">Create an account to track tickets and requests</p>
+                <form onsubmit="event.preventDefault(); showNotification('Registration complete! Please login.'); changePage('login');" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-pink-700 mb-1">Full Name</label>
+                        <input type="text" placeholder="Full Name" class="w-full p-3 border border-pink-300 rounded-lg" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-pink-700 mb-1">Email Address</label>
+                        <input type="email" placeholder="student@school.edu" class="w-full p-3 border border-pink-300 rounded-lg" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-pink-700 mb-1">Password</label>
+                        <input type="password" placeholder="••••••••" class="w-full p-3 border border-pink-300 rounded-lg" required>
+                    </div>
+                    <button type="submit" class="lazada-btn w-full py-3 rounded-lg font-bold">Create Account</button>
+                </form>
+            </div>
+        `;
+
+        const renderSubmitTicketPage = () => `
+            <div class="bg-white p-8 rounded-xl shadow-2xl max-w-2xl mx-auto border-4 border-pink-300 animate-fade-in-up">
+                <h1 class="text-2xl font-bold text-pink-800 mb-2">Submit Support Ticket</h1>
+                <form onsubmit="event.preventDefault(); handleTicketSubmit();" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-pink-700 mb-1">Category</label>
+                        <select id="ticket-category" class="w-full p-3 border border-pink-300 rounded-lg bg-white">
+                            ${categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-pink-700 mb-1">Subject</label>
+                        <input type="text" id="ticket-subject" placeholder="Summary of your issue..." class="w-full p-3 border border-pink-300 rounded-lg" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-pink-700 mb-1">Details</label>
+                        <textarea id="ticket-details" rows="4" placeholder="Describe your concern..." class="w-full p-3 border border-pink-300 rounded-lg" required></textarea>
+                    </div>
+                    <button type="submit" class="lazada-btn w-full py-3 rounded-full font-bold uppercase tracking-wider">Submit Request</button>
+                </form>
+            </div>
+        `;
+
+        const renderMyTicketsPage = () => `
+            <h1 class="text-3xl font-extrabold mb-6 text-pink-800">Submitted Tickets (${state.submittedTickets.length})</h1>
+            ${state.submittedTickets.length === 0 ? `
+                <div class="text-center py-12 bg-white p-8 rounded-xl border-2 border-pink-200">
+                    <p class="text-lg text-pink-600 mb-4">No tickets submitted yet.</p>
+                    <button onclick="changePage('submit-ticket')" class="lazada-btn py-2 px-6 rounded-full font-bold">Submit First Ticket</button>
+                </div>
+            ` : `
+                <div class="space-y-4">
+                    ${state.submittedTickets.map(t => `
+                        <div class="bg-white p-4 rounded-xl shadow border border-pink-200">
+                            <div class="flex justify-between items-center mb-2">
+                                <h3 class="font-bold text-pink-900">${t.subject}</h3>
+                                <span class="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full font-bold">${t.status}</span>
+                            </div>
+                            <p class="text-sm text-pink-700">${t.details}</p>
+                        </div>
+                    `).join('')}
+                </div>
+            `}
+        `;
+
+        const renderAccountPage = () => `
+            <div class="bg-white p-8 rounded-xl shadow-2xl max-w-xl mx-auto border-4 border-pink-300 animate-fade-in-up text-center">
+                <div class="w-20 h-20 bg-pink-600 text-white rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
+                    ${state.user.name.charAt(0)}
+                </div>
+                <h2 class="text-2xl font-bold text-pink-900">${state.user.name}</h2>
+                <p class="text-pink-600 text-sm mb-4">${state.user.email}</p>
+                <div class="text-left border-t border-pink-200 pt-4 space-y-2 text-sm">
+                    <p><strong>Student ID:</strong> ${state.user.studentId}</p>
+                    <p><strong>Course:</strong> ${state.user.course}</p>
+                </div>
+            </div>
+        `;
+
+        // --- PAGE SWITCHER ---
+        window.changePage = (page, catId = null, artId = null) => {
+            state.currentPage = page;
+            const container = document.getElementById('main-app-container');
+            
+            if (page === 'categories') container.innerHTML = renderCategoriesPage();
+            else if (page === 'about-team') container.innerHTML = renderAboutTeamPage();
+            else if (page === 'login') container.innerHTML = renderLoginPage();
+            else if (page === 'register') container.innerHTML = renderRegisterPage();
+            else if (page === 'submit-ticket') container.innerHTML = renderSubmitTicketPage();
+            else if (page === 'my-tickets') container.innerHTML = renderMyTicketsPage();
+            else if (page === 'account') container.innerHTML = renderAccountPage();
+            
+            updateTicketCount();
+            if (page === 'categories') renderCategories();
+        };
+
+        window.onload = () => changePage('categories');
+    </script>
+</body>
+</html>
