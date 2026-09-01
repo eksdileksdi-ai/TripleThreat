@@ -3,9 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pink Help Desk - School Support & Knowledge Base</title>
-    <!-- Tailwind CSS CDN -->
+    <title>Pink Help Desk - Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- AUTHENTICATION GUARD: Forces unauthenticated users back to landing -->
+    <script>
+        if (localStorage.getItem('helpDeskAuth') !== 'true') {
+            window.location.replace('landing.html');
+        }
+    </script>
+    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
         body { font-family: 'Inter', sans-serif; }
@@ -16,83 +23,90 @@
         }
         .animate-fade-in-up { animation: fadeIn 0.4s ease-out forwards; }
 
+        @keyframes slideRTL {
+            from { opacity: 0; transform: translateX(60px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .animate-slide-rtl { animation: slideRTL 0.5s ease-out forwards; }
+
         .artist-square {
-            background-size: cover;
-            background-position: center;
-            position: relative; 
-            overflow: hidden; 
+            background-size: cover; background-position: center;
+            position: relative; overflow: hidden; 
         }
         .artist-square::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background-color: rgba(0, 0, 0, 0.45); 
-            transition: background-color 0.3s;
-            z-index: 1; 
+            content: ''; position: absolute; inset: 0;
+            background-color: rgba(0, 0, 0, 0.45); transition: background-color 0.3s; z-index: 1; 
         }
         .artist-square:hover::before { background-color: rgba(0, 0, 0, 0.2); }
         .artist-name-text { position: relative; z-index: 2; text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8); }
 
         .product-card-button {
-            display: block;
-            width: 100%;
-            text-align: left;
-            padding: 1rem;
-            border-radius: 0.75rem; 
-            border: 1px solid #fbcfe8;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); 
-            background-color: #ffffff; 
+            display: block; width: 100%; text-align: left; padding: 1rem;
+            border-radius: 0.75rem; border: 1px solid #fbcfe8;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); background-color: #ffffff; 
             transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s;
         }
         .product-card-button:hover {
-            transform: translateY(-4px); 
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); 
-            background-color: #fce7f6;
+            transform: translateY(-4px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); background-color: #fce7f6;
         }
 
         .lazada-btn {
-            background-color: #be185d; 
-            color: white;
+            background-color: #be185d; color: white;
             transition: background-color 0.2s, transform 0.1s;
         }
         .lazada-btn:hover { background-color: #9d174d; transform: translateY(-1px); }
-        .profile-header { background: linear-gradient(to right, #be185d, #ec4899); }
+
+        /* Horizontal Spread Animation for Nav */
+        .nav-spread {
+            transition: max-width 0.5s ease-in-out, opacity 0.4s ease-in-out, margin 0.5s ease-in-out;
+            max-width: 0; opacity: 0; overflow: hidden; white-space: nowrap;
+        }
+        .nav-spread.open {
+            max-width: 800px; opacity: 1; margin-right: 1rem;
+        }
     </style>
 </head>
 <body class="bg-pink-50 text-pink-900 flex flex-col min-h-screen">
 
     <!-- HEADER / NAVIGATION -->
-    <header class="bg-pink-700 text-white py-4 px-4 md:px-8 shadow-lg sticky top-0 z-50">
-        <div class="max-w-6xl mx-auto flex justify-between items-center">
-            <button onclick="changePage('categories')" class="text-xl md:text-2xl font-extrabold hover:text-pink-100 transition-colors focus:outline-none flex items-center gap-2">
+    <header class="relative py-4 px-4 md:px-8 shadow-lg sticky top-0 z-50 bg-pink-700" 
+            style="background-image: url('0cd47f88-9477-426b-ad25-fc5794e60b8a.jpg'); background-size: cover; background-position: center;">
+        <div class="absolute inset-0 bg-pink-900/70 z-0"></div>
+        
+        <div class="max-w-6xl mx-auto flex justify-between items-center relative z-10">
+            <button onclick="changePage('categories')" class="text-white text-xl md:text-2xl font-extrabold hover:text-pink-200 transition-colors focus:outline-none flex items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3z"/><path d="M3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
-                 Help Desk Knowledge Base System
+                  Help Desk Knowledge Base System
             </button>
             
-            <div class="flex items-center space-x-2 md:space-x-4 text-sm font-semibold">
-                <button onclick="changePage('categories')" class="hover:text-pink-200 px-2 py-1">Home</button>
-                <button onclick="changePage('about-team')" class="hover:text-pink-200 px-2 py-1">About Us</button>
-                
-                <!-- Quick Submit Button -->
-                <button onclick="changePage('submit-ticket')" class="bg-pink-500 hover:bg-pink-600 px-3 py-1.5 rounded-full transition-colors flex items-center space-x-1 shadow">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></svg>
-                    <span class="hidden sm:inline">Submit Ticket</span>
-                </button>
+            <div class="relative flex items-center">
+                <!-- Spread Menu Container -->
+                <div class="flex items-center bg-white/10 rounded-full pr-2 pl-4 backdrop-blur-sm" onmouseleave="closeMenu()">
+                    <div id="nav-links" class="nav-spread flex items-center space-x-2 md:space-x-4 text-sm font-semibold">
+                        <button onclick="changePage('categories')" class="text-white hover:text-pink-200 px-2 py-1">Home</button>
+                        <button onclick="changePage('about-team')" class="text-white hover:text-pink-200 px-2 py-1">About Us</button>
+                        
+                        <button onclick="changePage('submit-ticket')" class="bg-pink-500 hover:bg-pink-600 text-white px-3 py-1.5 rounded-full transition-colors flex items-center space-x-1 shadow">
+                            <span class="hidden sm:inline">Submit Ticket</span>
+                        </button>
 
-                <!-- My Tickets -->
-                <button onclick="changePage('my-tickets')" class="relative p-2 rounded-full hover:bg-pink-600 transition-colors" title="My Submitted Tickets">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/></svg>
-                    <span id="ticket-count" class="absolute top-0 right-0 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold text-white bg-red-600 rounded-full">0</span>
-                </button>
+                        <button onclick="changePage('my-tickets')" class="relative p-2 rounded-full text-white hover:bg-pink-600 transition-colors flex items-center gap-1" title="My Submitted Tickets">
+                            Tickets
+                            <span id="ticket-count-nav" class="inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold text-white bg-red-600 rounded-full">0</span>
+                        </button>
 
-                <!-- Profile -->
-                <button onclick="changePage('account')" class="p-2 rounded-full hover:bg-pink-600 transition-colors" title="Student Portal Profile">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                </button>
+                        <button onclick="changePage('account')" class="p-2 rounded-full text-white hover:bg-pink-600 transition-colors" title="Profile">
+                            Profile
+                        </button>
+                        
+                        <button onclick="handleLogout()" class="text-red-300 hover:text-red-200 px-2 py-1 ml-2 font-bold">Logout</button>
+                    </div>
 
-                <!-- Auth Buttons -->
-                <button onclick="changePage('login')" class="border border-white/60 hover:bg-pink-600 px-3 py-1 rounded-lg">Login</button>
-                <button onclick="changePage('register')" class="bg-white text-pink-700 hover:bg-pink-100 px-3 py-1 rounded-lg shadow">Register</button>
+                    <!-- Hamburger Icon -->
+                    <button onclick="toggleMenu()" class="text-white hover:text-pink-200 transition-colors p-2 focus:outline-none" title="Toggle Menu">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                    </button>
+                </div>
             </div>
         </div>
     </header>
@@ -105,10 +119,12 @@
 
     <!-- FOOTER -->
     <footer class="bg-pink-100 border-t border-pink-200 py-6 px-4 md:px-8 mt-auto">
-        <div class="max-w-6xl mx-auto text-center">
-            <p class="text-sm text-pink-700 font-medium">
-                © 2026 Pink Help Desk Knowledge Base System. All rights reserved.
-            </p>
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center text-sm text-pink-700 font-medium">
+            <p>© 2026 Pink Help Desk Knowledge Base System. All rights reserved.</p>
+            <div class="space-x-4 mt-2 md:mt-0">
+                <button onclick="changePage('privacy')" class="hover:text-pink-900 hover:underline">Data Privacy</button>
+                <button onclick="changePage('terms')" class="hover:text-pink-900 hover:underline">Terms of Service</button>
+            </div>
         </div>
     </footer>
 
@@ -116,8 +132,7 @@
     <script>
         const categories = [
             {
-                id: 'accounts-login',
-                name: 'Accounts & Portal Access',
+                id: 'accounts-login', name: 'Accounts & Portal Access',
                 description: 'Password resets, 2FA login issues, student ID creation, and portal troubleshooting.',
                 logo: 'https://cdn.manilastandard.net/wp-content/uploads/2025/09/story-foto-1-1.jpg',
                 articles: [
@@ -126,8 +141,7 @@
                 ]
             },
             {
-                id: 'wifi-network',
-                name: 'Campus Wi-Fi & Infrastructure',
+                id: 'wifi-network', name: 'Campus Wi-Fi & Infrastructure',
                 description: 'Connecting to Campus Wi-Fi, VPN usage, and hardware support.',
                 logo: 'https://static.wikia.nocookie.net/love-talk/images/3/37/Le-sserafim-kim-chae-won-source-music-girl-group-2022.jpg/revision/latest/scale-to-width-down/1000?cb=20230307142319',
                 articles: [
@@ -135,8 +149,7 @@
                 ]
             },
             {
-                id: 'enrolment-grades',
-                name: 'Enrolment & Academic Records',
+                id: 'enrolment-grades', name: 'Enrolment & Academic Records',
                 description: 'Class registration, transcript requests, and subject add/drop.',
                 logo: 'https://staticg.sportskeeda.com/editor/2025/08/61fb0-17558696348449-1920.jpg?w=640',
                 articles: [
@@ -144,8 +157,7 @@
                 ]
             },
             {
-                id: 'tuition-fees',
-                name: 'Tuition & Billing Support',
+                id: 'tuition-fees', name: 'Tuition & Billing Support',
                 description: 'Payment channels, fee breakdowns, and scholarship queries.',
                 logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS_XjkHcMW2UM5WEvrWEG_pDcbB4U4A62SXgrADbQKiEYg0Tor7YI-gA8FS&s=10',
                 articles: [
@@ -155,13 +167,19 @@
         ];
 
         let state = {
-            currentPage: 'categories',
-            selectedCategoryId: null,
-            selectedArticleId: null,
-            searchQuery: '',
-            submittedTickets: [],
+            currentPage: 'categories', activeCategoryIndex: 0, searchQuery: '', submittedTickets: [],
             user: { name: 'Fracy Ala', email: 'fracy@school.edu', studentId: '2026-88392-MN', course: 'BS Information Technology' }
         };
+
+        // Logout specific function
+        window.handleLogout = () => {
+            localStorage.removeItem('helpDeskAuth');
+            window.location.replace('landing.html');
+        };
+
+        // Spread Menu Logic
+        window.toggleMenu = () => document.getElementById('nav-links').classList.toggle('open');
+        window.closeMenu = () => document.getElementById('nav-links').classList.remove('open');
 
         const showNotification = (message) => {
             const container = document.getElementById('notification-message-container');
@@ -174,8 +192,24 @@
         };
 
         const updateTicketCount = () => {
-            const countElement = document.getElementById('ticket-count');
-            if (countElement) countElement.textContent = state.submittedTickets.length;
+            const countNav = document.getElementById('ticket-count-nav');
+            if (countNav) countNav.textContent = state.submittedTickets.length;
+        };
+
+        // --- CAROUSEL LOGIC ---
+        let carouselInterval;
+        const startCarousel = () => {
+            clearInterval(carouselInterval);
+            carouselInterval = setInterval(() => { changeCarouselCard(1); }, 4000);
+        };
+
+        const changeCarouselCard = (delta) => {
+            let nextIndex = state.activeCategoryIndex + delta;
+            if (nextIndex < 0) nextIndex = categories.length - 1;
+            if (nextIndex >= categories.length) nextIndex = 0;
+            state.activeCategoryIndex = nextIndex;
+            renderCategories();
+            startCarousel();
         };
 
         window.handleTicketSubmit = () => {
@@ -183,18 +217,12 @@
             const categoryId = document.getElementById('ticket-category').value;
             const details = document.getElementById('ticket-details').value;
 
-            if (!subject || !details) {
-                showNotification("⚠️ Please fill out all required ticket fields.");
-                return;
-            }
+            if (!subject || !details) { showNotification("⚠️ Please fill out all required ticket fields."); return; }
 
             const newTicket = {
                 id: 'TICK-' + Math.floor(1000 + Math.random() * 9000),
-                subject,
-                category: categories.find(c => c.id === categoryId)?.name || 'General Query',
-                details,
-                date: new Date().toLocaleDateString(),
-                status: 'Open'
+                subject, category: categories.find(c => c.id === categoryId)?.name || 'General Query',
+                details, date: new Date().toLocaleDateString(), status: 'Open'
             };
 
             state.submittedTickets.unshift(newTicket);
@@ -206,42 +234,47 @@
         // --- RENDER FUNCTIONS ---
         const renderCategoriesPage = () => `
             <div class="bg-white p-6 md:p-8 rounded-xl shadow-xl mb-8 border-4 border-pink-300 animate-fade-in-up">
-                <h1 class="text-2xl md:text-3xl font-extrabold text-pink-800 mb-2">Welcome to  Help Desk Knowledge Base System</h1>
-                <p class="text-pink-700 leading-relaxed">
-                    Search our self-service knowledge base articles first. If you cannot find a solution to your concern, you can submit a support ticket directly to our team.
-                </p>
+                <h1 class="text-2xl md:text-3xl font-extrabold text-pink-800 mb-2">Welcome to Help Desk Knowledge Base System</h1>
+                <p class="text-pink-700 leading-relaxed">Search our self-service knowledge base articles first. If you cannot find a solution to your concern, you can submit a support ticket directly to our team.</p>
             </div>
 
             <div class="mb-8 animate-fade-in-up">
-                <input 
-                    type="text" 
-                    id="kb-search-input"
-                    placeholder="Search FAQs, solutions, or topics (e.g. Wi-Fi, password, grades)..." 
-                    value="${state.searchQuery}"
-                    oninput="state.searchQuery = this.value; renderSearchResults();"
-                    class="w-full p-4 text-lg border-2 border-pink-300 rounded-xl focus:ring-2 focus:ring-pink-500 bg-white shadow-md text-pink-900"
-                />
+                <input type="text" id="kb-search-input" placeholder="Search FAQs, solutions, or topics (e.g. Wi-Fi, password, grades)..." 
+                    value="${state.searchQuery}" oninput="state.searchQuery = this.value; renderSearchResults();"
+                    class="w-full p-4 text-lg border-2 border-pink-300 rounded-xl focus:ring-2 focus:ring-pink-500 bg-white shadow-md text-pink-900" />
             </div>
 
             <div id="kb-dynamic-container">
                 <h2 class="text-2xl font-bold mb-6 text-pink-800">Browse Knowledge Categories</h2>
-                <div id="categories-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div>
+                <div id="categories-container" class="relative group"></div>
             </div>
         `;
 
         const renderCategories = () => {
             const container = document.getElementById('categories-container');
             if (!container) return;
-            container.innerHTML = categories.map(cat => `
-                <button onclick="changePage('category-articles', '${cat.id}')" 
-                    class="artist-square h-48 w-full rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all transform hover:scale-[1.02] text-left cursor-pointer"
-                    style="background-image: url('${cat.logo}');">
-                    <div class="artist-name-text absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent text-white">
-                        <h2 class="text-lg font-bold">${cat.name}</h2>
-                        <p class="text-xs text-pink-200 line-clamp-2 mt-1">${cat.description}</p>
+            const cat = categories[state.activeCategoryIndex];
+            
+            container.innerHTML = `
+                <div class="artist-square h-[28rem] md:h-[24rem] w-full rounded-2xl overflow-hidden shadow-2xl transition-all duration-300 transform hover:scale-[1.02] text-left cursor-pointer animate-slide-rtl flex flex-col justify-end p-6 md:p-8"
+                     onclick="changePage('category-articles', '${cat.id}')" style="background-image: url('${cat.logo}');">
+                    <div class="artist-name-text text-white relative z-10 space-y-3">
+                        <h2 class="text-2xl md:text-3xl font-extrabold tracking-tight">${cat.name}</h2>
+                        <p class="text-sm md:text-md text-pink-100 max-w-2xl line-clamp-2 md:line-clamp-none">${cat.description}</p>
+                        <button class="lazada-btn font-bold py-2.5 px-6 rounded-full shadow-md mt-2 flex items-center gap-2 text-sm uppercase tracking-wider">
+                            Browse Category
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                        </button>
                     </div>
+                </div>
+
+                <button onclick="changeCarouselCard(-1)" class="absolute top-1/2 -left-4 md:-left-6 transform -translate-y-1/2 bg-white/80 text-pink-700 p-3 md:p-4 rounded-full shadow-lg hover:bg-white hover:text-pink-900 transition-colors focus:outline-none z-20 group-hover:opacity-100 opacity-90">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
                 </button>
-            `).join('');
+                <button onclick="changeCarouselCard(1)" class="absolute top-1/2 -right-4 md:-right-6 transform -translate-y-1/2 bg-white/80 text-pink-700 p-3 md:p-4 rounded-full shadow-lg hover:bg-white hover:text-pink-900 transition-colors focus:outline-none z-20 group-hover:opacity-100 opacity-90">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                </button>
+            `;
         };
 
         const renderSearchResults = () => {
@@ -249,10 +282,7 @@
             if (!container) return;
             const query = state.searchQuery.toLowerCase().trim();
             if (!query) {
-                container.innerHTML = `
-                    <h2 class="text-2xl font-bold mb-6 text-pink-800">Browse Knowledge Categories</h2>
-                    <div id="categories-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div>
-                `;
+                container.innerHTML = `<h2 class="text-2xl font-bold mb-6 text-pink-800">Browse Knowledge Categories</h2><div id="categories-container" class="relative group"></div>`;
                 renderCategories();
                 return;
             }
@@ -268,13 +298,10 @@
 
             if (results.length === 0) {
                 container.innerHTML = `
-                    <div class="bg-white p-8 rounded-xl border-2 border-pink-200 text-center text-pink-700">
+                    <div class="bg-white p-8 rounded-xl border-2 border-pink-200 text-center text-pink-700 animate-fade-in-up">
                         <p class="text-lg font-semibold mb-2">No direct solution articles found for "${query}"</p>
-                        <button onclick="changePage('submit-ticket')" class="lazada-btn font-bold py-2 px-6 rounded-full shadow-md mt-2">
-                            Submit a Support Ticket
-                        </button>
-                    </div>
-                `;
+                        <button onclick="changePage('submit-ticket')" class="lazada-btn font-bold py-2 px-6 rounded-full shadow-md mt-2">Submit a Support Ticket</button>
+                    </div>`;
                 return;
             }
 
@@ -288,80 +315,8 @@
                             <p class="text-pink-700 text-sm line-clamp-2">${art.solution}</p>
                         </div>
                     `).join('')}
-                </div>
-            `;
+                </div>`;
         };
-
-        const renderAboutTeamPage = () => `
-            <div class="text-center animate-fade-in-up">
-                <h1 class="text-3xl font-extrabold text-pink-800 mb-2">About Our Help Desk Team</h1>
-                <p class="text-pink-600 mb-8">Meet the team dedicated to assisting your academic and technical needs.</p>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-                    <!-- Leader -->
-                    <div class="bg-white p-6 rounded-xl shadow-lg border-2 border-pink-200 text-center">
-                        <img src="https://i.imgur.com/KgYwm3e.jpeg" alt="Fracy Ala" class="w-32 h-32 rounded-circle object-cover mx-auto mb-4 border-4 border-pink-500 rounded-full">
-                        <h3 class="text-xl font-bold text-pink-900">Fracy Ala</h3>
-                        <p class="text-sm font-semibold text-pink-600 mb-2">Support Leader lang po</p>
-                        <p class="text-xs text-pink-500">Fracy mo Elohim mo po exciting po</p>
-                    </div>
-                    <!-- Assistant -->
-                    <div class="bg-white p-6 rounded-xl shadow-lg border-2 border-pink-200 text-center">
-                        <img src="https://i.imgur.com/ESUm79E.jpeg" alt="Gian Baladula" class="w-32 h-32 rounded-circle object-cover mx-auto mb-4 border-4 border-pink-500 rounded-full">
-                        <h3 class="text-xl font-bold text-pink-900">Gian Baladula</h3>
-                        <p class="text-sm font-semibold text-pink-600 mb-2">Support Assistant Lang Po</p>
-                        <p class="text-xs text-pink-500">Gian mo hindi nag ccutting, exciting</p>
-                    </div>
-                    <!-- Support -->
-                    <div class="bg-white p-6 rounded-xl shadow-lg border-2 border-pink-200 text-center">
-                        <img src="https://i.imgur.com/2qRmcZ3.jpeg" alt="Alexander Maigue" class="w-32 h-32 rounded-circle object-cover mx-auto mb-4 border-4 border-pink-500 rounded-full">
-                        <h3 class="text-xl font-bold text-pink-900">Alexander Maigue</h3>
-                        <p class="text-sm font-semibold text-pink-600 mb-2">Support Lang Po</p>
-                        <p class="text-xs text-pink-500">Kahit ano basta meron ako neto exciting</p>
-                    </div>
-                </div>
-            </div>
-        `;
-
-        const renderLoginPage = () => `
-            <div class="max-w-md mx-auto bg-white p-8 rounded-xl shadow-2xl border-t-8 border-pink-600 animate-fade-in-up">
-                <h2 class="text-2xl font-bold text-pink-800 text-center mb-2">Help Desk Login</h2>
-                <p class="text-sm text-pink-600 text-center mb-6">Enter your credentials to access your portal</p>
-                <form onsubmit="event.preventDefault(); showNotification('Logged in successfully!'); changePage('categories');" class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-semibold text-pink-700 mb-1">Email Address</label>
-                        <input type="email" placeholder="student@school.edu" class="w-full p-3 border border-pink-300 rounded-lg" required>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-pink-700 mb-1">Password</label>
-                        <input type="password" placeholder="••••••••" class="w-full p-3 border border-pink-300 rounded-lg" required>
-                    </div>
-                    <button type="submit" class="lazada-btn w-full py-3 rounded-lg font-bold">Sign In</button>
-                </form>
-            </div>
-        `;
-
-        const renderRegisterPage = () => `
-            <div class="max-w-md mx-auto bg-white p-8 rounded-xl shadow-2xl border-t-8 border-pink-600 animate-fade-in-up">
-                <h2 class="text-2xl font-bold text-pink-800 text-center mb-2">Register Support Account</h2>
-                <p class="text-sm text-pink-600 text-center mb-6">Create an account to track tickets and requests</p>
-                <form onsubmit="event.preventDefault(); showNotification('Registration complete! Please login.'); changePage('login');" class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-semibold text-pink-700 mb-1">Full Name</label>
-                        <input type="text" placeholder="Full Name" class="w-full p-3 border border-pink-300 rounded-lg" required>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-pink-700 mb-1">Email Address</label>
-                        <input type="email" placeholder="student@school.edu" class="w-full p-3 border border-pink-300 rounded-lg" required>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-pink-700 mb-1">Password</label>
-                        <input type="password" placeholder="••••••••" class="w-full p-3 border border-pink-300 rounded-lg" required>
-                    </div>
-                    <button type="submit" class="lazada-btn w-full py-3 rounded-lg font-bold">Create Account</button>
-                </form>
-            </div>
-        `;
 
         const renderSubmitTicketPage = () => `
             <div class="bg-white p-8 rounded-xl shadow-2xl max-w-2xl mx-auto border-4 border-pink-300 animate-fade-in-up">
@@ -410,9 +365,7 @@
 
         const renderAccountPage = () => `
             <div class="bg-white p-8 rounded-xl shadow-2xl max-w-xl mx-auto border-4 border-pink-300 animate-fade-in-up text-center">
-                <div class="w-20 h-20 bg-pink-600 text-white rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
-                    ${state.user.name.charAt(0)}
-                </div>
+                <div class="w-20 h-20 bg-pink-600 text-white rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">${state.user.name.charAt(0)}</div>
                 <h2 class="text-2xl font-bold text-pink-900">${state.user.name}</h2>
                 <p class="text-pink-600 text-sm mb-4">${state.user.email}</p>
                 <div class="text-left border-t border-pink-200 pt-4 space-y-2 text-sm">
@@ -422,24 +375,127 @@
             </div>
         `;
 
+        const renderCategoryArticlesPage = (catId) => {
+            const cat = categories.find(c => c.id === catId);
+            if (!cat) return changePage('categories');
+            return `
+                <div class="animate-fade-in-up">
+                    <button onclick="changePage('categories')" class="text-pink-700 font-bold flex items-center gap-1.5 mb-6 hover:text-pink-900">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg> Back to Categories
+                    </button>
+                    <div class="flex items-center gap-6 mb-8 bg-white p-6 rounded-xl shadow-lg border border-pink-200">
+                        <img src="${cat.logo}" alt="${cat.name}" class="w-24 h-24 rounded-full object-cover shadow-md border-4 border-white ring-2 ring-pink-300">
+                        <div><h1 class="text-3xl font-extrabold text-pink-800 mb-1.5">${cat.name}</h1><p class="text-pink-700 text-md max-w-3xl">${cat.description}</p></div>
+                    </div>
+                    <h2 class="text-xl font-bold mb-5 text-pink-800">Support Articles</h2>
+                    <div class="space-y-4">
+                        ${cat.articles.map(art => `
+                            <div onclick="changePage('article-detail', '${cat.id}', '${art.id}')" class="product-card-button cursor-pointer">
+                                <h3 class="text-md md:text-lg font-bold text-pink-900">${art.title}</h3>
+                                <div class="text-pink-500 text-xs font-semibold flex items-center gap-3 mt-1 mb-2"><span>Views: ${art.views.toLocaleString()}</span><span>Last Updated: Aug 15, 2026</span></div>
+                                <p class="text-pink-700 text-sm md:text-md line-clamp-2">${art.solution}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        };
+
+        const renderArticleDetailPage = (catId, artId) => {
+            const cat = categories.find(c => c.id === catId);
+            const art = cat?.articles.find(a => a.id === artId);
+            if (!art) return changePage('category-articles', catId);
+            return `
+                <div class="animate-fade-in-up">
+                    <button onclick="changePage('category-articles', '${cat.id}')" class="text-pink-700 font-bold flex items-center gap-1.5 mb-6 hover:text-pink-900">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg> Back to ${cat.name} Articles
+                    </button>
+                    <div class="bg-white p-8 md:p-10 rounded-2xl shadow-2xl border-4 border-pink-300 mb-8">
+                        <div class="flex items-center justify-between mb-4 pb-4 border-b border-pink-100">
+                             <h1 class="text-2xl md:text-3xl font-extrabold text-pink-900">${art.title}</h1>
+                             <div class="text-pink-600 text-sm font-semibold flex items-center gap-4 text-right">
+                                <span>Updated: Aug 15, 2026</span>
+                                <div class="bg-pink-100 text-pink-700 px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg> ${art.views.toLocaleString()} Views
+                                </div>
+                             </div>
+                        </div>
+                        <h2 class="text-lg font-bold mb-4 text-pink-800 uppercase tracking-wider">Locate solution</h2>
+                        <div class="bg-pink-50 p-6 md:p-8 rounded-xl border border-pink-200 text-pink-800 leading-relaxed space-y-4 shadow-inner">
+                            <p class="text-md md:text-lg">${art.solution}</p><p class="text-sm">For further assistance, please submit a support ticket via the main navigation bar.</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        };
+
+        const renderAboutTeamPage = () => `
+            <div class="text-center animate-fade-in-up">
+                <h1 class="text-3xl font-extrabold text-pink-800 mb-2">About Our Help Desk Team</h1>
+                <p class="text-pink-600 mb-8">Meet the developers dedicated to assisting your academic and technical needs.</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+                    ${[
+                        {img: "https://i.imgur.com/KgYwm3e.jpeg", name: "Fracy Ala", role: "Support Leader lang po"},
+                        {img: "https://i.imgur.com/ESUm79E.jpeg", name: "Gian Baladula", role: "Support Assistant Lang Po"},
+                        {img: "https://i.imgur.com/2qRmcZ3.jpeg", name: "Alexander Maigue", role: "Support Lang Po"}
+                    ].map(dev => `
+                        <div class="bg-white p-6 rounded-xl shadow-lg border-2 border-pink-200 text-center">
+                            <img src="${dev.img}" alt="${dev.name}" class="w-32 h-32 object-cover mx-auto mb-4 border-4 border-pink-500 rounded-full">
+                            <h3 class="text-xl font-bold text-pink-900">${dev.name}</h3><p class="text-sm font-semibold text-pink-600 mb-2">${dev.role}</p>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+
+        const renderDataPrivacyPage = () => `
+            <div class="bg-white p-8 rounded-xl shadow-2xl max-w-3xl mx-auto border-4 border-pink-300 animate-fade-in-up">
+                <h1 class="text-3xl font-bold text-pink-900 mb-4">Data Privacy Policy</h1>
+                <div class="space-y-4 text-pink-800 leading-relaxed">
+                    <p>Welcome to the Pink Help Desk. We take your data privacy seriously. This policy outlines how we collect, use, and protect your information.</p>
+                    <h3 class="text-xl font-bold text-pink-900 mt-4">1. Information Collection</h3><p>We collect personal information such as your name, email address, student ID, and IP address when you register for an account or submit a support ticket.</p>
+                    <h3 class="text-xl font-bold text-pink-900 mt-4">2. Use of Information</h3><p>Your data is used strictly for resolving technical and academic issues, improving system performance, and verifying your identity.</p>
+                    <h3 class="text-xl font-bold text-pink-900 mt-4">3. Data Security</h3><p>All sensitive information is encrypted. We do not share your personal data with third-party organizations outside of the direct school administration.</p>
+                </div>
+            </div>
+        `;
+
+        const renderTermsPage = () => `
+            <div class="bg-white p-8 rounded-xl shadow-2xl max-w-3xl mx-auto border-4 border-pink-300 animate-fade-in-up">
+                <h1 class="text-3xl font-bold text-pink-900 mb-4">Terms of Service</h1>
+                <div class="space-y-4 text-pink-800 leading-relaxed">
+                    <p>By accessing the Pink Help Desk Knowledge Base System, you agree to comply with the following terms.</p>
+                    <h3 class="text-xl font-bold text-pink-900 mt-4">1. Acceptable Use</h3><p>You agree to use this system exclusively for submitting legitimate technical and academic support requests.</p>
+                    <h3 class="text-xl font-bold text-pink-900 mt-4">2. Account Responsibility</h3><p>You are responsible for maintaining the confidentiality of your account credentials. The administration is not liable for unauthorized access caused by user negligence.</p>
+                    <h3 class="text-xl font-bold text-pink-900 mt-4">3. System Modifications</h3><p>We reserve the right to modify, suspend, or discontinue any aspect of the portal at any time without prior notice.</p>
+                </div>
+            </div>
+        `;
+
         // --- PAGE SWITCHER ---
         window.changePage = (page, catId = null, artId = null) => {
+            closeMenu();
             state.currentPage = page;
             const container = document.getElementById('main-app-container');
             
             if (page === 'categories') container.innerHTML = renderCategoriesPage();
-            else if (page === 'about-team') container.innerHTML = renderAboutTeamPage();
-            else if (page === 'login') container.innerHTML = renderLoginPage();
-            else if (page === 'register') container.innerHTML = renderRegisterPage();
             else if (page === 'submit-ticket') container.innerHTML = renderSubmitTicketPage();
             else if (page === 'my-tickets') container.innerHTML = renderMyTicketsPage();
             else if (page === 'account') container.innerHTML = renderAccountPage();
+            else if (page === 'about-team') container.innerHTML = renderAboutTeamPage();
+            else if (page === 'privacy') container.innerHTML = renderDataPrivacyPage();
+            else if (page === 'terms') container.innerHTML = renderTermsPage();
+            else if (page === 'category-articles') container.innerHTML = renderCategoryArticlesPage(catId);
+            else if (page === 'article-detail') container.innerHTML = renderArticleDetailPage(catId, artId);
             
             updateTicketCount();
             if (page === 'categories') renderCategories();
         };
 
-        window.onload = () => changePage('categories');
+        window.onload = () => {
+            changePage('categories');
+            startCarousel();
+        };
     </script>
 </body>
 </html>
