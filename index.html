@@ -429,24 +429,41 @@
             `;
         };
 
-        const renderAboutTeamPage = () => `
-            <div class="text-center animate-fade-in-up">
-                <h1 class="text-3xl font-extrabold text-pink-800 mb-2">About Our Help Desk Team</h1>
-                <p class="text-pink-600 mb-8">Meet the developers dedicated to assisting your academic and technical needs.</p>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-                    ${[
-                        {img: "https://i.imgur.com/KgYwm3e.jpeg", name: "Fracy Ala", role: "Support Leader lang po"},
-                        {img: "https://i.imgur.com/ESUm79E.jpeg", name: "Gian Baladula", role: "Support Assistant Lang Po"},
-                        {img: "https://i.imgur.com/2qRmcZ3.jpeg", name: "Alexander Maigue", role: "Support Lang Po"}
-                    ].map(dev => `
-                        <div class="bg-white p-6 rounded-xl shadow-lg border-2 border-pink-200 text-center">
-                            <img src="${dev.img}" alt="${dev.name}" class="w-32 h-32 object-cover mx-auto mb-4 border-4 border-pink-500 rounded-full">
-                            <h3 class="text-xl font-bold text-pink-900">${dev.name}</h3><p class="text-sm font-semibold text-pink-600 mb-2">${dev.role}</p>
-                        </div>
-                    `).join('')}
+  const renderAboutTeamPage = () => `
+    <div class="text-center animate-fade-in-up">
+        <h1 class="text-3xl font-extrabold text-pink-800 mb-2">About Our Help Desk Team</h1>
+        <p class="text-pink-600 mb-8">Meet the developers dedicated to assisting your academic and technical needs.</p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+            ${[
+                {
+                    img: "https://i.imgur.com/KgYwm3e.jpeg",
+                    name: "Fracy Ala",
+                    role: "Support Leader",
+                    quote: '"Fracy mo Elohim mo po kasi exciting  na po"'
+                },
+                {
+                    img: "https://i.imgur.com/ESUm79E.jpeg",
+                    name: "Gian Baladula",
+                    role: "Support Assistant",
+                    quote: '"Gian mo hindi nag ccutting,  kasi exciting"'
+                },
+                {
+                    img: "https://i.imgur.com/2qRmcZ3.jpeg",
+                    name: "Alexander Maigue",
+                    role: "Support",
+                    quote: '"bakal ako"'
+                }
+            ].map(dev => `
+                <div class="bg-white p-6 rounded-xl shadow-lg border-2 border-pink-200 text-center">
+                    <img src="${dev.img}" alt="${dev.name}" class="w-32 h-32 object-cover mx-auto mb-4 border-4 border-pink-500 rounded-full">
+                    <h3 class="text-xl font-bold text-pink-900">${dev.name}</h3>
+                    <p class="text-sm font-semibold text-pink-600 mb-2">${dev.role}</p>
+                    <p class="text-sm italic text-pink-700">"${dev.quote.replace(/^"|"$/g, '')}"</p>
                 </div>
-            </div>
-        `;
+            `).join('')}
+        </div>
+    </div>
+`;
 
         const renderDataPrivacyPage = () => `
             <div class="bg-white p-8 rounded-xl shadow-2xl max-w-3xl mx-auto border-4 border-pink-300 animate-fade-in-up">
